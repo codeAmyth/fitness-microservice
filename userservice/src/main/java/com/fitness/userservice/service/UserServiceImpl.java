@@ -7,6 +7,7 @@ import com.fitness.userservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public UserResponse register(RegisterRequest request) {
@@ -41,6 +45,24 @@ public class UserServiceImpl implements UserService {
         userResponse.setLastName(savedUser.getLastName());
         userResponse.setCreatedAt(savedUser.getCreatedAt());
         userResponse.setUpdatedAt(savedUser.getUpdatedAt());
+
+        return userResponse;
+    }
+
+    @Override
+    public UserResponse getUserProfile(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+//        UserResponse userResponse = new UserResponse();
+//
+//        userResponse.setUserId(user.getUserId());
+//        userResponse.setPassword(user.getPassword());
+//        userResponse.setEmail(user.getEmail());
+//        userResponse.setFirstName(user.getFirstName());
+//        userResponse.setLastName(user.getLastName());
+//        userResponse.setCreatedAt(user.getCreatedAt());
+//        userResponse.setUpdatedAt(user.getUpdatedAt());
 
         return userResponse;
     }
