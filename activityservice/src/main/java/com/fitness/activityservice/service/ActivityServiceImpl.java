@@ -18,9 +18,17 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
 
+    private final UserValidationService userValidationService;
+
 
     @Override
     public ActivityResponse trackActivity(ActivityRequest request) {
+
+        boolean isValid = userValidationService.validateUser(request.getUserId());
+
+        if (!isValid) {
+            throw new RuntimeException("Invalid User: " + request.getUserId());
+        }
         Activity activity = Activity.builder()
                 .userId(request.getUserId())
                 .type(request.getType())
