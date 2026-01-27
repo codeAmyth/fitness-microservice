@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class UserResponse {
 
     private String userId;
+    private String keycloakId;
     private String email;
     private String password;
     private String firstName;
@@ -73,5 +74,13 @@ public class UserResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 }
