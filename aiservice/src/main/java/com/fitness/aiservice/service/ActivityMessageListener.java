@@ -6,8 +6,6 @@ import com.fitness.aiservice.repository.RecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +24,6 @@ public class ActivityMessageListener {
     public void processActivity(Activity activity) {
         log.info("Received Activity for processing: {}", activity.getUserId());
         Recommendation recommendation = activityAIService.generateRecommendation(activity);
-        recommendationRepository.save(recommendation);
+        recommendationRepository.save(recommendation); // ✅ FIX
     }
 }

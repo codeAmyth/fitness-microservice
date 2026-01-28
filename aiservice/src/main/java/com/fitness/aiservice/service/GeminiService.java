@@ -35,7 +35,7 @@ public class GeminiService {
         String response = webClient.post()
                 .uri(geminiApiUrl)
                 .header("Content-Type", "application/json")
-                .header("X-goog-api-key", geminiApiKey)
+                .header("X-goog-api-key", geminiApiKey.trim())
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
