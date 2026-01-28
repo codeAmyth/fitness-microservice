@@ -1,10 +1,9 @@
-package com.fitness.userservice.dto;
+package com.fitness.gateway.user;
 
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
 public class RegisterRequest {
 
@@ -18,20 +17,20 @@ public class RegisterRequest {
     private String firstName;
     private String lastName;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getKeycloakId() {
         return keycloakId;
     }
 
     public void setKeycloakId(String keycloakId) {
         this.keycloakId = keycloakId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
