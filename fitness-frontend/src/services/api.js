@@ -6,13 +6,14 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+/* -------- Interceptor -------- */
 api.interceptors.request.use(
   (config) => {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
 
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     if (userId) {
@@ -26,10 +27,18 @@ api.interceptors.request.use(
 
 /* -------- Activity APIs -------- */
 
-export const getActivities = () => api.get("/activities");
+// ✅ REQUIRED by ActivityForm.jsx
+export const addActivity = (activity) => {
+  const userId = localStorage.getItem("userId");
 
-export const addActivity = (activity) =>
-  api.post("/activities/activity", activity);
+  return api.post("/activities/activity", {
+    ...activity,
+    userId,
+  });
+};
+
+export const getActivities = () =>
+  api.get("/activities");
 
 export const getActivityById = (id) =>
   api.get(`/activities/${id}`);
@@ -39,4 +48,5 @@ export const getActivityById = (id) =>
 export const getActivityRecommendation = (id) =>
   api.get(`/recommendations/activity/${id}`);
 
+// default export (rarely used directly)
 export default api;

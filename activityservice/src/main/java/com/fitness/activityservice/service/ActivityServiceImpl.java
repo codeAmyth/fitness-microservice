@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
@@ -27,11 +29,16 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityResponse trackActivity(ActivityRequest request) {
 
+        if (request.getUserId() == null || request.getUserId().isBlank()) {
+            throw new IllegalArgumentException("UserId is missing in ActivityRequest");
+        }
+
         boolean isValid = userValidationService.validateUser(request.getUserId());
 
         if (!isValid) {
             throw new RuntimeException("Invalid User: " + request.getUserId());
         }
+
         Activity activity = Activity.builder()
                 .userId(request.getUserId())
                 .type(request.getType())
@@ -42,15 +49,23 @@ public class ActivityServiceImpl implements ActivityService {
                 .build();
 
         Activity savedActivity = activityRepository.save(activity);
+        kafkaTemplate.send(topicName, savedActivity.getUserId(), savedActivity);
 
-        try {
-            kafkaTemplate.send(topicName, savedActivity.getUserId(), savedActivity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        ActivityResponse activityResponse = modelMapper.map(savedActivity, ActivityResponse.class);
+        return modelMapper.map(savedActivity, ActivityResponse.class);
+    }
 
-        return activityResponse;
+    @Override
+    public List<ActivityResponse> getAllActivities() {
+        return activityRepository.findAll()
+                .stream()
+                .map(activity -> modelMapper.map(activity, ActivityResponse.class))
+                .toList();
+    }
 
+    @Override
+    public ActivityResponse getActivityById(String id) {
+        Activity activity = activityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Activity not found"));
+        return modelMapper.map(activity, ActivityResponse.class);
     }
 }
